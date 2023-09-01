@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
     let gameCanvas = document.getElementById("gameCanvas");
+    const downButton = document.getElementById("downButton");
     gameCanvas.width = window.innerWidth;
     gameCanvas.height = window.innerHeight;
     const ctx = gameCanvas.getContext("2d");
@@ -14,16 +15,34 @@ document.addEventListener("DOMContentLoaded", function() {
         if (e.code === "Space") {
             birdVelocity = -7;
         }
-        if (e.code === "ArrowDown") {
-            birdVelocity = 5;
-        }
+    });
+
+    gameCanvas.addEventListener("touchstart", function(e) {
+        birdVelocity = -7;
+    });
+
+    downButton.addEventListener("click", function() {
+        birdVelocity = 5;
     });
 
     let obstacles = [];
-    for(let i = 0; i < 5; i++) { // Aumentei o número de obstáculos para 5
+
+    let lastHeight = Math.random() * (gameCanvas.height - 300) + 100; // initial height
+
+    for(let i = 0; i < 8; i++) { 
+        let height;
+
+        if (i % 2 === 0) { // New random height
+            height = Math.random() * (gameCanvas.height - 300) + 100;
+        } else { // Make height similar to last obstacle with 60% similarity
+            height = lastHeight + (Math.random() * 60 - 30);
+        }
+
+        lastHeight = height;
+
         obstacles.push({
-            x: gameCanvas.width + i * 300,
-            height: Math.random() * (gameCanvas.height - 200) + 50,
+            x: gameCanvas.width + i * 250,
+            height: height,
             counted: false
         });
     }
@@ -34,8 +53,8 @@ document.addEventListener("DOMContentLoaded", function() {
         score = 0;
         isGameOver = false;
         obstacles.forEach((obs, i) => {
-            obs.x = gameCanvas.width + i * 300;
-            obs.height = Math.random() * (gameCanvas.height - 200) + 50;
+            obs.x = gameCanvas.width + i * 250;
+            obs.height = Math.random() * (gameCanvas.height - 300) + 100;
             obs.counted = false;
         });
         draw();
@@ -70,7 +89,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             if (obs.x < -50) {
                 obs.x = gameCanvas.width;
-                obs.height = Math.random() * (gameCanvas.height - 200) + 50;
+                obs.height = Math.random() * (gameCanvas.height - 300) + 100;
                 obs.counted = false;
             }
             
