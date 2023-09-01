@@ -51,6 +51,10 @@ O código JavaScript faz o seguinte:
 - Implementar um placar de líderes online.
 
 ---
+[Visite o Jogo Aqui](https://bruksfildservices01.github.io/jogo-flupp/)
+
 
 Este é um projeto em desenvolvimento e todos os tipos de contribuição são bem-vindos!
+
+
 
