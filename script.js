@@ -15,6 +15,9 @@ document.addEventListener("DOMContentLoaded", function() {
         if (e.code === "Space") {
             birdVelocity = -7;
         }
+        if (e.code === "Space") {
+            birdVelocity = 5;
+        }
     });
 
     gameCanvas.addEventListener("touchstart", function(e) {
