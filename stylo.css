@@ -6,3 +6,12 @@ canvas {
     display: block;
     background: #87CEEB;
 }
+
+#downButton {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 24px; /* aumenta o tamanho do texto */
+    padding: 10px; /* adiciona algum padding */
+    background-color: #f1f1f1; /* muda a cor de fundo */
+}

@@ -1,8 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
     let gameCanvas = document.getElementById("gameCanvas");
     const downButton = document.getElementById("downButton");
-    gameCanvas.width = window.innerWidth;
-    gameCanvas.height = window.innerHeight;
     const ctx = gameCanvas.getContext("2d");
 
     let birdY = gameCanvas.height / 2;
@@ -10,6 +8,83 @@ document.addEventListener("DOMContentLoaded", function() {
     let gravity = 0.5;
     let score = 0;
     let isGameOver = false;
+
+    let birdRadius = isMobileDevice() ? 7 : 20;
+    let obstacleWidth = isMobileDevice() ? 20 : 50;
+    let obstacleDistance = isMobileDevice() ? 200 : 250;
+
+    function isMobileDevice() {
+        return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
+    }
+
+    function resizeCanvas() {
+        gameCanvas.width = window.innerWidth;
+        gameCanvas.height = window.innerHeight;
+        birdY = gameCanvas.height / 2;
+    }
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    window.addEventListener("keydown", function(e) {
+        if (e.code === "Space") {
+            birdVelocity = -7;
+        }
+        if (e.code === "ArrowDown") {
+            birdVelocity = 7;
+        }
+    });
+
+    gameCanvas.addEventListener("touchstart", function(e) {
+        birdVelocity = -7;
+    });
+
+    downButton.addEventListener("click", function() {
+        birdVelocity = 7;
+    });
+
+    let obstacles = [];
+
+    function generateObstacle() {
+        let height = Math.random() * (gameCanvas.height - 150) + 50;
+        return {
+            x: gameCanvas.width,
+            height: height,
+            counted: false
+        };
+    }
+
+    obstacles = Array.from({ length: 10 }, (_, i) => {
+        const obstacle = generateObstacle();
+        obstacle.x = gameCanvas.width + i * obstacleDistance;
+        return obstacle;
+    });
+
+    function resetGame() {
+        birdY = gameCanvas.height / 2;
+        birdVelocity = 0;
+        score = 0;
+        isGameOver = false;
+        obstacles.forEach((obs, i) => {
+            obs.x = gameCanvas.width + i * obstacleDistance;
+            obs.height = Math.random() * (gameCanvas.height - 150) + 50;
+            obs.counted = false;
+        });
+        draw();
+    }
+
+    function drawBird(y) {
+        ctx.fillStyle = "yellow";
+        ctx.beginPath();
+        ctx.arc(50, y, birdRadius, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    function drawObstacle(obs) {
+        ctx.fillStyle = "green";
+        ctx.fillRect(obs.x, 0, obstacleWidth, obs.height);
+        ctx.fillRect(obs.x, obs.height + 100, obstacleWidth, gameCanvas.height - obs.height);
+    }
 
     function findLastObstacle(obstacles) {
         let lastObstacle = obstacles[0];
@@ -19,60 +94,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
         return lastObstacle;
-    }
-
-    window.addEventListener("keydown", function(e) {
-        if (e.code === "Space") {
-            birdVelocity = -10;
-        }
-        if (e.code === "ArrowDown") {
-            birdVelocity = 10;
-        }
-    });
-    
-    gameCanvas.addEventListener("touchstart", function(e) {
-        birdVelocity = -10;
-    });
-
-    downButton.addEventListener("click", function() {
-        birdVelocity = 10;
-    });
-
-    let obstacles = [];
-
-    for(let i = 0; i < 8; i++) { 
-        let height = Math.random() * (gameCanvas.height - 300) + 100;
-        obstacles.push({
-            x: gameCanvas.width + i * 250,
-            height: height,
-            counted: false
-        });
-    }
-
-    function resetGame() {
-        birdY = gameCanvas.height / 2;
-        birdVelocity = 0;
-        score = 0;
-        isGameOver = false;
-        obstacles.forEach((obs, i) => {
-            obs.x = gameCanvas.width + i * 250;
-            obs.height = Math.random() * (gameCanvas.height - 300) + 100;
-            obs.counted = false;
-        });
-        draw();
-    }
-
-    function drawBird(y) {
-        ctx.fillStyle = "yellow";
-        ctx.beginPath();
-        ctx.arc(100, y, 20, 0, Math.PI * 2);
-        ctx.fill();
-    }
-
-    function drawObstacle(obs) {
-        ctx.fillStyle = "green";
-        ctx.fillRect(obs.x, 0, 50, obs.height);
-        ctx.fillRect(obs.x, obs.height + 150, 50, gameCanvas.height - obs.height);
     }
 
     function draw() {
@@ -89,22 +110,22 @@ document.addEventListener("DOMContentLoaded", function() {
             drawObstacle(obs);
             obs.x -= 5;
 
-            if (obs.x < -50) {
+            if (obs.x < -obstacleWidth) {
                 let lastObstacle = findLastObstacle(obstacles);
-                obs.x = lastObstacle.x + 250; // Ajuste conforme necessário
-                obs.height = Math.random() * (gameCanvas.height - 300) + 100;
+                obs.x = lastObstacle.x + obstacleDistance;
+                obs.height = Math.random() * (gameCanvas.height - 150) + 50;
                 obs.counted = false;
             }
 
-            if (!obs.counted && obs.x <= 100) {
+            if (!obs.counted && obs.x <= 50) {
                 score++;
                 obs.counted = true;
             }
         });
 
-        for(let obs of obstacles) {
+        for (let obs of obstacles) {
             if (birdY > gameCanvas.height || birdY < 0 ||
-                (obs.x < 120 && obs.x > 70 && (birdY < obs.height || birdY > obs.height + 150))) {
+                (obs.x < 50 + birdRadius && obs.x > 50 - birdRadius && (birdY < obs.height || birdY > obs.height + 100))) {
                 isGameOver = true;
                 alert("Game Over");
                 resetGame();
