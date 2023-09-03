@@ -5,15 +5,16 @@ document.addEventListener("DOMContentLoaded", function() {
 
     let birdY = gameCanvas.height / 2;
     let birdVelocity = 0;
-    let gravity = 0.5;
+    let gravity = isMobileDevice() ? 0.2 : 0.5;
+    let obstacleSpeed = isMobileDevice() ? 2 : 5;
     let score = 0;
     let isGameOver = false;
 
     let birdRadius = isMobileDevice() ? 7 : 20;
-    let birdSpeed = isMobileDevice() ? -8 : -10;
+    let birdSpeed = isMobileDevice() ? -5 : -10;
     let obstacleWidth = isMobileDevice() ? 20 : 50;
     let obstacleDistance = isMobileDevice() ? 200 : 300;
-    let obstacleGap = isMobileDevice() ? 100 : 200; // Gap entre obstáculos
+    let obstacleGap = isMobileDevice() ? 100 : 200;
 
     function isMobileDevice() {
         return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
@@ -30,10 +31,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
     window.addEventListener("keydown", function(e) {
         if (e.code === "Space") {
-            birdVelocity = birdSpeed; // Ajuste esta variável conforme necessário
+            birdVelocity = birdSpeed;
         }
         if (e.code === "ArrowDown") {
-            birdVelocity = 7;
+            birdVelocity = 5;
         }
     });
 
@@ -42,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     downButton.addEventListener("click", function() {
-        birdVelocity = 7;
+        birdVelocity = 5;
     });
 
     let obstacles = [];
@@ -85,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function() {
     function drawObstacle(obs) {
         ctx.fillStyle = "green";
         ctx.fillRect(obs.x, 0, obstacleWidth, obs.height);
-        ctx.fillRect(obs.x, obs.height + obstacleGap, obstacleWidth, gameCanvas.height - obs.height); 
+        ctx.fillRect(obs.x, obs.height + obstacleGap, obstacleWidth, gameCanvas.height - obs.height);
     }
 
     function findLastObstacle(obstacles) {
@@ -110,7 +111,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         obstacles.forEach(obs => {
             drawObstacle(obs);
-            obs.x -= 5;
+            obs.x -= obstacleSpeed;
 
             if (obs.x < -obstacleWidth) {
                 let lastObstacle = findLastObstacle(obstacles);
