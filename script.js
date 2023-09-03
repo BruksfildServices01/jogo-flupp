@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function() {
     let birdSpeed = isMobileDevice() ? -5 : -10;
     let obstacleWidth = isMobileDevice() ? 20 : 50;
     let obstacleDistance = isMobileDevice() ? 200 : 300;
-    let obstacleGap = isMobileDevice() ? 100 : 200;
+    let obstacleGap = isMobileDevice() ? 160 : 200;
 
     function isMobileDevice() {
         return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
