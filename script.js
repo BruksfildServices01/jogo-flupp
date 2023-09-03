@@ -10,8 +10,10 @@ document.addEventListener("DOMContentLoaded", function() {
     let isGameOver = false;
 
     let birdRadius = isMobileDevice() ? 7 : 20;
+    let birdSpeed = isMobileDevice() ? -8 : -10;
     let obstacleWidth = isMobileDevice() ? 20 : 50;
-    let obstacleDistance = isMobileDevice() ? 200 : 250;
+    let obstacleDistance = isMobileDevice() ? 200 : 300;
+    let obstacleGap = isMobileDevice() ? 100 : 200; // Gap entre obstáculos
 
     function isMobileDevice() {
         return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
@@ -28,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     window.addEventListener("keydown", function(e) {
         if (e.code === "Space") {
-            birdVelocity = -7;
+            birdVelocity = birdSpeed; // Ajuste esta variável conforme necessário
         }
         if (e.code === "ArrowDown") {
             birdVelocity = 7;
@@ -36,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     gameCanvas.addEventListener("touchstart", function(e) {
-        birdVelocity = -7;
+        birdVelocity = birdSpeed;
     });
 
     downButton.addEventListener("click", function() {
@@ -83,7 +85,7 @@ document.addEventListener("DOMContentLoaded", function() {
     function drawObstacle(obs) {
         ctx.fillStyle = "green";
         ctx.fillRect(obs.x, 0, obstacleWidth, obs.height);
-        ctx.fillRect(obs.x, obs.height + 100, obstacleWidth, gameCanvas.height - obs.height);
+        ctx.fillRect(obs.x, obs.height + obstacleGap, obstacleWidth, gameCanvas.height - obs.height); 
     }
 
     function findLastObstacle(obstacles) {
@@ -125,7 +127,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         for (let obs of obstacles) {
             if (birdY > gameCanvas.height || birdY < 0 ||
-                (obs.x < 50 + birdRadius && obs.x > 50 - birdRadius && (birdY < obs.height || birdY > obs.height + 100))) {
+                (obs.x < 50 + birdRadius && obs.x > 50 - birdRadius && (birdY < obs.height || birdY > obs.height + obstacleGap))) {
                 isGameOver = true;
                 alert("Game Over");
                 resetGame();
