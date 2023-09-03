@@ -7,42 +7,41 @@ document.addEventListener("DOMContentLoaded", function() {
 
     let birdY = gameCanvas.height / 2;
     let birdVelocity = 0;
-    let gravity = 0.25;
+    let gravity = 0.5;
     let score = 0;
     let isGameOver = false;
 
+    function findLastObstacle(obstacles) {
+        let lastObstacle = obstacles[0];
+        for (let i = 1; i < obstacles.length; i++) {
+            if (obstacles[i].x > lastObstacle.x) {
+                lastObstacle = obstacles[i];
+            }
+        }
+        return lastObstacle;
+    }
+
     window.addEventListener("keydown", function(e) {
         if (e.code === "Space") {
-            birdVelocity = -7;
+            birdVelocity = -10;
         }
-        if (e.code === "Space") {
-            birdVelocity = 5;
+        if (e.code === "ArrowDown") {
+            birdVelocity = 10;
         }
     });
-
+    
     gameCanvas.addEventListener("touchstart", function(e) {
-        birdVelocity = -7;
+        birdVelocity = -10;
     });
 
     downButton.addEventListener("click", function() {
-        birdVelocity = 5;
+        birdVelocity = 10;
     });
 
     let obstacles = [];
 
-    let lastHeight = Math.random() * (gameCanvas.height - 300) + 100; // initial height
-
     for(let i = 0; i < 8; i++) { 
-        let height;
-
-        if (i % 2 === 0) { // New random height
-            height = Math.random() * (gameCanvas.height - 300) + 100;
-        } else { // Make height similar to last obstacle with 60% similarity
-            height = lastHeight + (Math.random() * 60 - 30);
-        }
-
-        lastHeight = height;
-
+        let height = Math.random() * (gameCanvas.height - 300) + 100;
         obstacles.push({
             x: gameCanvas.width + i * 250,
             height: height,
@@ -78,24 +77,25 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function draw() {
         if (isGameOver) return;
-        
+
         ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
-        
+
         birdVelocity += gravity;
         birdY += birdVelocity;
-        
+
         drawBird(birdY);
-        
+
         obstacles.forEach(obs => {
             drawObstacle(obs);
             obs.x -= 5;
 
             if (obs.x < -50) {
-                obs.x = gameCanvas.width;
+                let lastObstacle = findLastObstacle(obstacles);
+                obs.x = lastObstacle.x + 250; // Ajuste conforme necessário
                 obs.height = Math.random() * (gameCanvas.height - 300) + 100;
                 obs.counted = false;
             }
-            
+
             if (!obs.counted && obs.x <= 100) {
                 score++;
                 obs.counted = true;
@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", function() {
         ctx.font = "30px Arial";
         ctx.fillStyle = "black";
         ctx.fillText("Score: " + score, 10, 50);
-        
+
         requestAnimationFrame(draw);
     }
 
