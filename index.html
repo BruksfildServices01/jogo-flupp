@@ -7,6 +7,30 @@
     <title>Document</title>
 </head>
 <body>
+    
+      
+  <div id="gameOverModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="gameOverClose">&times;</span>
+        <h1>Game Over</h1>
+        <p id="finalScore"></p>
+        
+        <ul>
+            <h3>Regras para PC</h3>
+            <li>Pressione a tecla de espaço para pular</li>
+            <li>Pressione a tecla de seta para baixo para cair mais rápido</li>
+        </ul>
+        
+        <ul>
+            <h3>Regras para Mobile</h3>
+            <li>Toque na tela para pular</li>
+            <li>Pressione o botão 'Descer' para cair mais rápido</li>
+        </ul>
+
+    </div>
+</div>
+
+     
     <canvas id="gameCanvas"></canvas>
     <button id="downButton" style="position: absolute; bottom: 10px; right: 10px;">Descer</button>
     <script src="./script.js"></script>

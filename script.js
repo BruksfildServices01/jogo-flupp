@@ -2,6 +2,11 @@ document.addEventListener("DOMContentLoaded", function() {
     let gameCanvas = document.getElementById("gameCanvas");
     const downButton = document.getElementById("downButton");
     const ctx = gameCanvas.getContext("2d");
+    const gameOverModal = document.getElementById("gameOverModal");
+    const gameOverClose = document.getElementById("gameOverClose");
+    const finalScoreElement = document.getElementById("finalScore");
+    const instructionsModal = document.getElementById("instructionsModal");
+    const instructionsClose = document.getElementById("instructionsClose");
 
     let birdY = gameCanvas.height / 2;
     let birdVelocity = 0;
@@ -15,6 +20,9 @@ document.addEventListener("DOMContentLoaded", function() {
     let obstacleWidth = isMobileDevice() ? 20 : 50;
     let obstacleDistance = isMobileDevice() ? 200 : 300;
     let obstacleGap = isMobileDevice() ? 160 : 200;
+
+
+    
 
     function isMobileDevice() {
         return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
@@ -46,6 +54,11 @@ document.addEventListener("DOMContentLoaded", function() {
         birdVelocity = 5;
     });
 
+    gameOverClose.addEventListener("click", function() {
+        gameOverModal.style.display = "none";
+        resetGame();
+    });
+
     let obstacles = [];
 
     function generateObstacle() {
@@ -74,6 +87,11 @@ document.addEventListener("DOMContentLoaded", function() {
             obs.counted = false;
         });
         draw();
+    }
+
+    function showGameOverModal() {
+        finalScoreElement.textContent = "Sua pontuação final é: " + score;
+        gameOverModal.style.display = "block";
     }
 
     function drawBird(y) {
@@ -130,8 +148,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (birdY > gameCanvas.height || birdY < 0 ||
                 (obs.x < 50 + birdRadius && obs.x > 50 - birdRadius && (birdY < obs.height || birdY > obs.height + obstacleGap))) {
                 isGameOver = true;
-                alert("Game Over");
-                resetGame();
+                showGameOverModal();
                 return;
             }
         }
